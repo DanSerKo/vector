@@ -10,6 +10,7 @@ int main() {
   }
   a.Clear();
   a.PushBack("2048");
+  a.PushBack("2047");
   // a.Resize(10);
   a.PushBack("1a");
   a.PushBack("b");
