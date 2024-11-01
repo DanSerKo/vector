@@ -126,6 +126,7 @@ public:
     T operator[](size_t ind) const {
         return x_[ind];
     }
+
 private:
     std::unique_ptr<T[]> x_;
     size_t capacity_;
