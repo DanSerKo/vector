@@ -94,7 +94,7 @@ public:
         if (x_ != nullptr) {
             delete[] x_;
         }
-        x_ = std::move(u);
+        x_ = u;
     }
 
     void Swap(Vector& rhs) {
