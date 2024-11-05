@@ -21,13 +21,13 @@ public:
         }
     }
 
-    Vector(std::initializer_list<T>&& list) {
+    Vector(std::initializer_list<T> list) {
         capacity_ = list.size();
         size_ = list.size();
         x_ = new T[capacity_];
         size_t i = 0;
         for (auto& item : list) {
-            x_[i++] = std::move(item);
+            x_[i++] = item;
         }
     }
 
