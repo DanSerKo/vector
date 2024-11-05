@@ -1,6 +1,5 @@
 #pragma once
 #include <cstddef>
-#include <iterator>
 #include <initializer_list>
 #include <stdexcept>
 
