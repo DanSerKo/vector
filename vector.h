@@ -1,8 +1,7 @@
 #pragma once
 #include <cstddef>
-#include <initializer_list>
 #include <iterator>
-#include <memory>
+#include <initializer_list>
 #include <stdexcept>
 
 template<typename T>
@@ -10,45 +9,33 @@ class Vector {
 public:
     Vector() {
         size_ = 0;
-        capacity_ = 0;
-        x_ = nullptr;
+        capacity_ = 1;
+        x_ = new T[capacity_];
     }
 
     explicit Vector(size_t sz) {
         capacity_ = sz;
         size_ = sz;
-        if (capacity_ == 0) {
-            x_ = nullptr;
-        } else {
-            x_ = std::make_unique<T[]>(capacity_);
-        }
+        x_ = new T[capacity_];
         for (size_t i = 0; i < size_; i++) {
             x_[i] = T();
         }
     }
 
-    Vector(std::initializer_list<T> list) {
+    Vector(std::initializer_list<T>&& list) {
         capacity_ = list.size();
         size_ = list.size();
-        if (capacity_ == 0) {
-            x_ = nullptr;
-        } else {
-            x_ = std::make_unique<T[]>(capacity_);
-        }
+        x_ = new T[capacity_];
         size_t i = 0;
-        for (auto& r : list) {
-            x_[i++] = r;
+        for (auto& item : list) {
+            x_[i++] = std::move(item);
         }
     }
 
     Vector(const Vector& a) {
         capacity_ = a.capacity_;
         size_ = a.size_;
-        if (capacity_ == 0) {
-            x_ = nullptr;
-        } else {
-            x_ = std::make_unique<T[]>(capacity_);
-        }
+        x_ = new T[capacity_];
         for (size_t i = 0; i < size_; i++) {
             x_[i] = a.x_[i];
         }
@@ -62,6 +49,9 @@ public:
     }
 
     ~Vector() {
+        if (x_ != nullptr) {
+            delete[] x_;
+        }
         x_ = nullptr;
     }
 
@@ -80,18 +70,9 @@ public:
 
     void PushBack(const T& a) {
         if (size_ == capacity_) {
-            capacity_ *= 2;
-            if (capacity_ == 0) {
-                capacity_++;
-            }
-            std::unique_ptr<T[]> u = std::make_unique<T[]>(capacity_);
-            for (size_t i = 0; i < size_; i++) {
-                u[i] = x_[i];
-            }
-            x_ = std::move(u);
+            Reserve(capacity_ * 2);
         }
-        x_[size_] = a;
-        size_++;
+        x_[size_++] = a;
     }
 
     void PopBack() {
@@ -106,9 +87,12 @@ public:
         if (capacity <= capacity_)
             return;
         capacity_ = capacity;
-        std::unique_ptr<T[]> u = std::make_unique<T[]>(capacity_);
-        for (int i = 0; i < size_; i++) {
-            u[i] = x_[i];
+        T* u = new T[capacity_];
+        for (size_t i = 0; i < size_; i++) {
+            u[i] = std::move(x_[i]);
+        }
+        if (x_ != nullptr) {
+            delete[] x_;
         }
         x_ = std::move(u);
     }
@@ -128,7 +112,7 @@ public:
     }
 
 private:
-    std::unique_ptr<T[]> x_;
+    T* x_;
     size_t capacity_;
     size_t size_;
 };
